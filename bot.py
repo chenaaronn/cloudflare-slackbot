@@ -1,0 +1,51 @@
+# main Slack bot logic + event handlers
+import slack
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+from flask import Flask, request, Response
+from slackeventsapi import SlackEventAdapter
+
+from commands import handle_miwebsite
+
+# loads environment variables
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
+
+# launches a web server to handle incoming HTTP requests (required for Slack Events API)
+# current running webserver
+app = Flask(__name__) 
+
+# connects Slack to your Flask app via the Events API.
+# slack sends events (ie msgs) to your /slack/events endpoint
+slack_event_adapter = SlackEventAdapter(os.environ['SIGNING_SECRET'],'/slack/events', app)
+
+# gives bot the ability to send messages, fetch users, channels, etc.
+# uses the Slack Web API
+client = slack.WebClient(token=os.environ['SLACK_TOKEN'])
+# return bot id
+BOT_ID = client.api_call("auth.test")['user_id']
+
+# EVENT HANDLING TUT EXAMPLE
+@slack_event_adapter.on('message')
+def handle_message(event_data):
+    event = event_data.get('event', {}) # look for event, if nothing return blank dict; this is bascially msg
+    channel_id = event.get('channel')
+    user_id = event.get('user')
+    text = event.get('text')
+    
+    if BOT_ID != user_id:
+        if 'hi bot' in text.lower():
+            client.chat_postMessage(channel=channel_id, text=f"Hello <@{user_id}>!")
+        elif 'echo' in text.lower():
+            client.chat_postMessage(channel=channel_id, text=text)
+    
+
+@app.route('/miwebsite', methods=['POST'])
+def miwebsite():
+    return handle_miwebsite(client)
+
+
+# automatically update the web server
+if __name__ == "__main__":
+    app.run(debug=True)
