@@ -66,15 +66,24 @@ def handle_miwebsite(client):
         if "cloudflare" in org_info.casefold():
             cloudflare = "Yes"
             break
+
     
+
+
+    # standard output
     response_msg = (
         f"*Website:* {domain}\n"
         f"*Host:* {host_info}\n"
         f"*IP Ownership:* {', '.join(org_names)}\n"
-        f"*Cloudflare:* {cloudflare}\n"
-        f"*Cloudflare Content:* {cloudflare_content}\n"
-        f"*Cloudflare Content Lookup:* {cloudflare_lookup}"
+        f"*Cloudflare:* {cloudflare}"
     )
+
+    # output w/ cloudflare
+    if cloudflare == "Yes":
+        response_msg += (
+            f"\n*Cloudflare Content:* {cloudflare_content}\n"
+            f"*Cloudflare Content Lookup:* {cloudflare_lookup}"
+        )
 
     client.chat_postMessage(channel=channel_id, text=response_msg)
     return Response(), 200
@@ -89,3 +98,5 @@ def is_valid_domain(domain):
         return True
     except socket.gaierror:
         return False
+    
+# create and push only cloudflare.py and info.txt
