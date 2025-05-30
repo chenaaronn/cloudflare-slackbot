@@ -5,7 +5,10 @@ import ipaddress
 from flask import request, Response
 from ipwhois import IPWhois
 import slack
+import os
 from urllib.parse import urlparse
+from dotenv import load_dotenv
+from contents_cf import get_dns_info
 
 def handle_miwebsite(client):
     data = request.form
@@ -67,9 +70,6 @@ def handle_miwebsite(client):
             cloudflare = "Yes"
             break
 
-    
-
-
     # standard output
     response_msg = (
         f"*Website:* {domain}\n"
@@ -77,13 +77,14 @@ def handle_miwebsite(client):
         f"*IP Ownership:* {', '.join(org_names)}\n"
         f"*Cloudflare:* {cloudflare}"
     )
-
-    # output w/ cloudflare
+    
+    # IF CLOUDFLARE
     if cloudflare == "Yes":
-        response_msg += (
-            f"\n*Cloudflare Content:* {cloudflare_content}\n"
-            f"*Cloudflare Content Lookup:* {cloudflare_lookup}"
-        )
+        try:
+            content = get_dns_info(domain)
+        except Exception as e:
+            content = f"Error: {str(e)}"
+        response_msg += f"\n{content}"
 
     client.chat_postMessage(channel=channel_id, text=response_msg)
     return Response(), 200
@@ -98,5 +99,3 @@ def is_valid_domain(domain):
         return True
     except socket.gaierror:
         return False
-    
-# create and push only cloudflare.py and info.txt
