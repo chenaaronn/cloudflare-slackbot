@@ -1,16 +1,15 @@
 import socket
-import requests
 import subprocess
 import ipaddress
+from urllib.parse import urlparse
+
 from flask import request, Response
 from ipwhois import IPWhois
 import slack
-import os
-from urllib.parse import urlparse
-from dotenv import load_dotenv
+
 from contents_cf import get_dns_info
 
-def handle_miwebsite(client):
+def handle_miwebsite(client): # note: rename cloudflare.py -> 
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get('channel_id')
@@ -20,6 +19,8 @@ def handle_miwebsite(client):
     # initial error checking
     if len(args) < 2:
         return Response("Usage: /miwebsite -cl [domain]", status=200)
+    
+    # argument parsing libraries**
 
     flag = args[0] 
     # let cl be default
@@ -77,17 +78,22 @@ def handle_miwebsite(client):
         f"*IP Ownership:* {', '.join(org_names)}\n"
         f"*Cloudflare:* {cloudflare}"
     )
+
+    # note: data type with all the fields with the output **
+    # class
     
     # IF CLOUDFLARE
     if cloudflare == "Yes":
         try:
-            content = get_dns_info(domain)
+            dns_records = get_dns_info(domain)
         except Exception as e:
-            content = f"Error: {str(e)}"
-        response_msg += f"\n{content}"
+            dns_records = f"Error: {str(e)}"
+        response_msg += f"\n{dns_records}"
 
     client.chat_postMessage(channel=channel_id, text=response_msg)
     return Response(), 200
+# handle_miwebsite()
+
 
 # checks if the domain can be resolved to an IP address
 def is_valid_domain(domain):

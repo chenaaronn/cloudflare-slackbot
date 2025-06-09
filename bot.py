@@ -1,11 +1,13 @@
 # main Slack bot logic + event handlers
-import slack
 import os
 from pathlib import Path
+
+import slack
+from flask import Flask, request
 from dotenv import load_dotenv
-from flask import Flask, request, Response
 from slackeventsapi import SlackEventAdapter
 
+from cloudflare import handle_miwebsite
 from cloudflare import handle_miwebsite
 
 # loads environment variables
@@ -45,6 +47,7 @@ def handle_message(event_data):
 def miwebsite():
     return handle_miwebsite(client)
 
+# /help
 
 # automatically update the web server
 if __name__ == "__main__":
