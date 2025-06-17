@@ -26,7 +26,10 @@ def handle_miwebsite(client): # note: rename cloudflare.py ->
     # let cl be default
     # add error checking and other flags
     
-    domain = args[1]
+    raw = args[1]
+    parsed = urlparse(raw)
+    domain = parsed.netloc or parsed.path  # strips http:// and trailing slashes
+
     if not is_valid_domain(domain):
         return Response("Invalid website domain / Domain not found", status=200)
 
@@ -38,9 +41,10 @@ def handle_miwebsite(client): # note: rename cloudflare.py ->
     cloudflare_lookup = "NA"
 
     # resolve domain to IP addresses
+    # Resolve IPs (IPv4 + IPv6) using getaddrinfo
     try:
-        dig_result = subprocess.run(['dig', domain, 'A', '+short'], capture_output=True, text=True)
-        ip_addresses = dig_result.stdout.strip().split('\n')
+        infos = socket.getaddrinfo(domain, None, socket.AF_UNSPEC, socket.SOCK_STREAM)
+        ip_addresses = sorted({ai[4][0] for ai in infos})
         host_info = ', '.join(ip_addresses) if ip_addresses else "Not Found"
     except Exception:
         host_info = "Not Found"

@@ -6,31 +6,39 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Load variables from .env file
 
+import requests
+
 def list_all_zones(headers):
     url = "https://api.cloudflare.com/client/v4/zones"
     params = {"page": 1, "per_page": 50}
     zones = []
 
     while True:
-        response = requests.get(url, headers=headers, params=params)
-        response.raise_for_status()
-        data = response.json()
+        res = requests.get(url, headers=headers, params=params)
+        res.raise_for_status()
+        data = res.json()
         zones.extend(data.get("result", []))
 
-        if not data["result_info"].get("more"):
+        info = data.get("result_info", {})
+        page = info.get("page", 1)
+        total = info.get("total_pages", 1)
+        if page >= total:
             break
-
         params["page"] += 1
 
     return zones
 # list_all_zone()
 
 def find_zone_id_for_domain(domain, zones):
-    for zone in zones:
-        if domain.endswith(zone["name"]):
-            return zone["id"]
-    raise Exception(f"Zone for domain '{domain}' not found.")
+    # Collect any zones whose name matches the end of the domain
+    matches = [(zone["name"], zone["id"]) for zone in zones if domain.endswith(zone["name"])]
+    if not matches:
+        raise Exception(f"Zone for domain '{domain}' not found.")
+    # Choose the longest (most specific) matching zone name
+    best_zone, best_id = max(matches, key=lambda x: len(x[0]))
+    return best_id
 # find_zone_id()
+
 
 def list_dns_records(zone_id, headers, domain):
     url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records"
@@ -90,5 +98,20 @@ def get_dns_info(domain):
     provider = get_provider_from_records(records)
 
     formatted = "\n".join(lines)
+
+    """ debug
+    zones = list_all_zones(headers)
+    print(f"[DEBUG] Fetched {len(zones)} zones")
+
+    # Next lines before find_zone_id_for_domain
+    for z in zones[:5]:
+        print("Sample zone:", z["name"])
+    matches = [(z["name"], z["id"]) for z in zones if domain.endswith(z["name"])]
+    print("[DEBUG] Possible zone matches:", matches)
+
+    zone_id = find_zone_id_for_domain(domain, zones)
+    """
+
+
     return f"*DNS Records:*\n{formatted}\n*Provider:* {provider}"
 # get_dns_info()
