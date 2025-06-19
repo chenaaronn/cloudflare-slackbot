@@ -7,8 +7,8 @@ from flask import Flask, request
 from dotenv import load_dotenv
 from slackeventsapi import SlackEventAdapter
 
-from cloudflare import handle_miwebsite
-from cloudflare import handle_miwebsite
+from miwebsite_handler import handle_miwebsite
+from miwebsite_handler import handle_miwebsite
 
 # loads environment variables
 env_path = Path('.') / '.env'

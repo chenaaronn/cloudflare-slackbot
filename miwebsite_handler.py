@@ -1,3 +1,4 @@
+# handles /miwebsite 
 import socket
 import subprocess
 import ipaddress
@@ -7,9 +8,9 @@ from flask import request, Response
 from ipwhois import IPWhois
 import slack
 
-from contents_cf import get_dns_info
+from cloudflare_api import get_dns_info
 
-def handle_miwebsite(client): # note: rename cloudflare.py -> 
+def handle_miwebsite(client): 
     data = request.form
     user_id = data.get('user_id')
     channel_id = data.get('channel_id')
@@ -20,7 +21,8 @@ def handle_miwebsite(client): # note: rename cloudflare.py ->
     if len(args) < 2:
         return Response("Usage: /miwebsite -cl [domain]", status=200)
     
-    # argument parsing libraries**
+    # acknowledge the request immediately to Slack
+    # client.chat_postMessage(channel=channel_id, text="Processing your request...")
 
     flag = args[0] 
     # let cl be default

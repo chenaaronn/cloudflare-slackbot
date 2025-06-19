@@ -1,3 +1,5 @@
+# interact with the Cloudflare API, retrieve DNS records for a given domain, 
+# identify its zone, and determine the IP ownership provider for those records
 import requests 
 import os
 from ipwhois import IPWhois
@@ -39,24 +41,26 @@ def find_zone_id_for_domain(domain, zones):
     return best_id
 # find_zone_id()
 
-
 def list_dns_records(zone_id, headers, domain):
     url = f"https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records"
     params = {"page": 1, "per_page": 50}
     records = []
 
     while True:
-        response = requests.get(url, headers=headers, params=params)
-        response.raise_for_status()
-        data = response.json()
+        res = requests.get(url, headers=headers, params=params)
+        res.raise_for_status()
+        data = res.json()
+        records.extend(
+            (r["content"], r["type"])
+            for r in data.get("result", [])
+            if r["name"] == domain
+        )
 
-        for record in data.get("result", []):
-            if record["name"] == domain:
-                records.append((record["content"], record["type"]))
-
-        if not data["result_info"].get("more"):
+        info = data.get("result_info", {})
+        page = info.get("page", 1)
+        total = info.get("total_pages", 1)
+        if page >= total:
             break
-
         params["page"] += 1
 
     return records
