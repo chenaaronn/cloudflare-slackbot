@@ -1,4 +1,4 @@
-# handles /miwebsite 
+# /website [site name]
 import socket
 import subprocess
 import ipaddress
