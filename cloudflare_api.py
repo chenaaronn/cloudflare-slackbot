@@ -2,6 +2,7 @@
 # identify its zone, and determine the IP ownership provider for those records
 import requests 
 import os
+import socket
 from ipwhois import IPWhois
 import ipaddress
 from dotenv import load_dotenv
@@ -66,18 +67,30 @@ def list_dns_records(zone_id, headers, domain):
     return records
 # list_dns_records()
 
+
 def get_provider_from_records(records):
     providers = set()
     for content, rtype in records:
-        if rtype not in ("A", "AAAA"):
-            continue  # Skip non-IP records
-        try:
-            ip_obj = ipaddress.ip_address(content)
-            res = IPWhois(str(ip_obj)).lookup_rdap()
-            org = res.get('network', {}).get('name', 'Unknown')
-            providers.add(org)
-        except Exception:
-            continue
+        ips_to_check = []
+        if rtype in ("A", "AAAA"):
+            ips_to_check.append(content)
+        elif rtype == "CNAME":
+            try:
+                infos = socket.getaddrinfo(content, None)
+                ips = {ai[4][0] for ai in infos}
+                ips_to_check.extend(ips)
+            except Exception:
+                continue
+
+        for ip in ips_to_check:
+            try:
+                ip_obj = ipaddress.ip_address(ip)
+                res = IPWhois(str(ip_obj)).lookup_rdap()
+                org = res.get('network', {}).get('name', 'Unknown')
+                providers.add(org)
+            except Exception:
+                continue
+
     return ", ".join(sorted(providers)) if providers else "NA"
 # get_provider()
 

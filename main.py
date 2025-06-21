@@ -7,8 +7,7 @@ from flask import Flask, request
 from dotenv import load_dotenv
 from slackeventsapi import SlackEventAdapter
 
-from miwebsite_handler import handle_miwebsite
-from miwebsite_handler import handle_miwebsite
+from website import handle_website
 
 # loads environment variables
 env_path = Path('.') / '.env'
@@ -43,11 +42,10 @@ def handle_message(event_data):
             client.chat_postMessage(channel=channel_id, text=text)
     
 
-@app.route('/miwebsite', methods=['POST'])
-def miwebsite():
-    return handle_miwebsite(client)
+@app.route('/website', methods=['POST'])
+def website():
+    return handle_website(client)
 
-# /help
 
 # automatically update the web server
 if __name__ == "__main__":
