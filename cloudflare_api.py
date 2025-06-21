@@ -67,7 +67,6 @@ def list_dns_records(zone_id, headers, domain):
     return records
 # list_dns_records()
 
-
 def get_provider_from_records(records):
     providers = set()
     for content, rtype in records:

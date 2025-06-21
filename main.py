@@ -7,7 +7,7 @@ from flask import Flask, request
 from dotenv import load_dotenv
 from slackeventsapi import SlackEventAdapter
 
-from website import handle_website
+from slash_commands.website import handle_website
 
 # loads environment variables
 env_path = Path('.') / '.env'
@@ -36,7 +36,7 @@ def handle_message(event_data):
     text = event.get('text')
     
     if BOT_ID != user_id:
-        if 'hi bot' in text.lower():
+        if 'hi webby' in text.lower() or 'hello webby' in text.lower():
             client.chat_postMessage(channel=channel_id, text=f"Hello <@{user_id}>!")
         elif 'echo' in text.lower():
             client.chat_postMessage(channel=channel_id, text=text)
@@ -45,7 +45,6 @@ def handle_message(event_data):
 @app.route('/website', methods=['POST'])
 def website():
     return handle_website(client)
-
 
 # automatically update the web server
 if __name__ == "__main__":
