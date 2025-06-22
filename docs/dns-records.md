@@ -1,6 +1,6 @@
-## DNS Records Table
+# DNS Records Table
 
-### 1. Type
+## 1. Type
 Specifies the DNS record type, which determines the purpose of the record. Common types include:
 
 - **A**: Maps a domain to an **IPv4** address  
@@ -9,10 +9,10 @@ Specifies the DNS record type, which determines the purpose of the record. Commo
 - **MX**: Directs email to a **mail server**  
 - **TXT**: Holds **arbitrary text data**, often for verification purposes  
 
-### 2. Name
+## 2. Name
 Indicates the **hostname** or **subdomain** for the record.
 
-### 3. Content
+## 3. Content
 Contains the **value** associated with the record type:
 
 - For **A/AAAA** records: the **IP address**  

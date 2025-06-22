@@ -18,7 +18,7 @@ def handle_website(client):
 
     args = text.split()
     if len(args) < 1:
-        return Response("Usage: /website [domain]", status=200)
+        return Response("Usage: /website [website URL]", status=200)
 
     domain = args[0]
     threading.Thread(
@@ -85,3 +85,4 @@ def is_valid_domain(domain):
         return True
     except socket.gaierror:
         return False
+# is_valid_domain()

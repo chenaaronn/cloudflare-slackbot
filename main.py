@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from slackeventsapi import SlackEventAdapter
 
 from slash_commands.website import handle_website
+from slash_commands.cf import handle_cf_ray
 
 # loads environment variables
 env_path = Path('.') / '.env'
@@ -41,10 +42,14 @@ def handle_message(event_data):
         elif 'echo' in text.lower():
             client.chat_postMessage(channel=channel_id, text=text)
     
-
 @app.route('/website', methods=['POST'])
 def website():
     return handle_website(client)
+
+@app.route('/cf', methods=['POST'])
+@app.route('/cloudflare', methods=['POST'])
+def cloudflare_command():
+    return handle_cf_ray(client)
 
 # automatically update the web server
 if __name__ == "__main__":
