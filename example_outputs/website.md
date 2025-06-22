@@ -1,47 +1,54 @@
-# `/website [domain]` Sample Output
+## Sample Outputs
+_Input:_ `/website [domain]` 
 
-## Website: `caen.engin.umich.edu`
+### `/website caen.engin.umich.edu`
+- **Website:** caen.engin.umich.edu  
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
 - **DNS Records:**  
   - Content: `wp.wpenginepowered.com`, Type: `CNAME`  
-- **Provider:** WPENG
+- **Provider:** WPENG  
 
-## Website: `deepblue.lib.umich.edu`
+### `/website deepblue.lib.umich.edu`
+- **Website:** deepblue.lib.umich.edu  
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
 - **DNS Records:**  
   - Content: `141.213.128.141`, Type: `A`  
   - Content: `google-site-verification=...`, Type: `TXT`  
-- **Provider:** UMICH-4866
+- **Provider:** UMICH-4866  
 
-## Website: `www.engin.umich.edu`
+### `/website www.engin.umich.edu`
+- **Website:** www.engin.umich.edu  
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
 - **DNS Records:**  
   - Content: `live-engin-www-engineering.pantheonsite.io`, Type: `CNAME`  
-- **Provider:** PANTHEON-IP4
+- **Provider:** PANTHEON-IP4  
 
-## Website: `giving.umich.edu`
+### `/website giving.umich.edu`
+- **Website:** giving.umich.edu  
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
 - **DNS Records:**  
   - Content: `dde-prod-636646351.us-east-1.elb.amazonaws.com`, Type: `CNAME`  
-- **Provider:** AT-88-Z
+- **Provider:** AT-88-Z  
 
-## Website: `its.umich.edu`
+### `/website its.umich.edu`
+- **Website:** its.umich.edu  
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
 - **DNS Records:**  
   - Content: `live-its-its-umich-drupal7.pantheonsite.io`, Type: `CNAME`  
-- **Provider:** PANTHEON-IP4
+- **Provider:** PANTHEON-IP4  
 
-## Website: `jeffcd10.cdn-dev.it.umich.edu`
+### `/website jeffcd10.cdn-dev.it.umich.edu`
+- **Website:** jeffcd10.cdn-dev.it.umich.edu  
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
@@ -49,34 +56,38 @@
   - Content: `23.185.0.3`, Type: `A`  
   - Content: `2620:12a:8001::3`, Type: `AAAA`  
   - Content: `2620:12a:8000::3`, Type: `AAAA`  
-- **Provider:** PANTHEON-IP4, PANTHEON-IP6
+- **Provider:** PANTHEON-IP4, PANTHEON-IP6  
 
-## Website: `michigan.fulcrum.org`
+### `/website michigan.fulcrum.org`
+- **Website:** michigan.fulcrum.org  
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
 - **DNS Records:**  
   - Content: `fulcrum-lb.umdl.umich.edu`, Type: `CNAME`  
-- **Provider:** UMICH-4866
+- **Provider:** UMICH-4866  
 
-## Website: `news.umich.edu`
+### `/website news.umich.edu`
+- **Website:** news.umich.edu  
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
 - **DNS Records:**  
   - Content: `198.58.97.164`, Type: `A`  
   - Content: `2600:3c00::f03c:91ff:fe6e:bbb8`, Type: `AAAA`  
-- **Provider:** LINODE, NET6-2600-3C00-2
+- **Provider:** LINODE, NET6-2600-3C00-2  
 
-## Website: `targetedemaild10.cdn-dev.it.umich.edu`
+### `/website targetedemaild10.cdn-dev.it.umich.edu`
+- **Website:** targetedemaild10.cdn-dev.it.umich.edu  
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
 - **DNS Records:**  
   - Content: `apps.aws.web.umich.edu`, Type: `CNAME`  
-- **Provider:** AT-88-Z
+- **Provider:** AT-88-Z  
 
-## Website: `umich.edu`
+### `/website umich.edu`
+- **Website:** umich.edu
 - **Host:** 162.159.140.37, 172.66.0.37  
 - **IP Ownership:** 162.159.140.37 (CLOUDFLARENET), 172.66.0.37 (CLOUDFLARENET)  
 - **Cloudflare:** Yes  
@@ -85,7 +96,8 @@
   - Content: `2607:f018:1:1::1`, Type: `AAAA`  
 - **Provider:** UMICH-1, UMICH-V6-0
 
-## Website: `youtube.com`
+### `/website youtube.com`
+- **Website:** youtube.com
 - **Host:** 142.250.190.142  
 - **IP Ownership:** 142.250.190.142 (GOOGLE)  
 - **Cloudflare:** No

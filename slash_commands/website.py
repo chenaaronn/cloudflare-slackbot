@@ -75,7 +75,6 @@ def process_website(client, domain, channel_id):
     client.chat_postMessage(channel=channel_id, text=response_msg)
 # process_miwebsite()
 
-
 # checks if the domain can be resolved to an IP address
 def is_valid_domain(domain):
     if domain.startswith("http://") or domain.startswith("https://"):
