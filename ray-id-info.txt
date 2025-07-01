@@ -1,0 +1,14 @@
+- service:
+Which Cloudflare service took the action. Examples:
+waf – Web Application Firewall
+custom_rules – Firewall Rules / Custom Rules
+rate_limit – Rate limiting
+bot_management – Bot detection
+ip – IP/country blocking
+
+- action:
+The mitigation or decision Cloudflare made for that request:
+allow
+log
+challenge (like CAPTCHA or JS)
+block
