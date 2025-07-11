@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 import slack
-from flask import Flask, request
+from flask import Flask, request, Response
 from dotenv import load_dotenv
 from slackeventsapi import SlackEventAdapter
 
@@ -49,7 +49,7 @@ def website():
 @app.route('/cf', methods=['POST'])
 @app.route('/cloudflare', methods=['POST'])
 def cloudflare_command():
-    return handle_cf_ray(client)
+    return handle_cf_ray(client) 
 
 # automatically update the web server
 if __name__ == "__main__":
