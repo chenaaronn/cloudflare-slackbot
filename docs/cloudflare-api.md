@@ -11,3 +11,4 @@
 - **Endpoint:** `GET /zones/:zone_identifier/dns_records`
 - **Description:** Retrieves DNS records (such as A, AAAA, CNAME, MX, TXT) for a specific zone identified by `zone_identifier`.  
 - **Purpose:** Used to fetch all DNS records for the given domain’s zone to analyze IP addresses and related information.
+
