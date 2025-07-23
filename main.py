@@ -9,6 +9,7 @@ from slackeventsapi import SlackEventAdapter
 
 from slash_commands.website import handle_website
 from slash_commands.cf import handle_cf_ray
+from slash_commands.webby import handle_webby_help
 
 # loads environment variables
 env_path = Path('.') / '.env'
@@ -50,6 +51,11 @@ def website():
 @app.route('/cloudflare', methods=['POST'])
 def cloudflare_command():
     return handle_cf_ray(client) 
+
+@app.route('/webby', methods=['POST'])
+@app.route('/help', methods=['POST'])
+def webby_help():
+    return handle_webby_help(client)
 
 # automatically update the web server
 if __name__ == "__main__":
