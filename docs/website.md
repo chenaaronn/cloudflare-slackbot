@@ -18,7 +18,7 @@ This Slack integration provides a slash command (`/website [domain]`) that allow
 
 ---
 
-## Example Outputs
+## Sample Outputs
 
 ### `/website jeffcd10.cdn-dev.it.umich.edu`
 - **Website:** jeffcd10.cdn-dev.it.umich.edu  

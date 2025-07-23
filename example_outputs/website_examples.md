@@ -1,4 +1,4 @@
-# Sample Outputs
+# `/website` Sample Outputs
 _Input:_ `/website [website URL]` 
 
 ## `/website caen.engin.umich.edu`

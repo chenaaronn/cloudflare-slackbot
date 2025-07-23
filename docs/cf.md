@@ -26,6 +26,31 @@ If the Ray ID corresponds to a security event logged by Cloudflare within the pa
 * User Agent
 * Datetime
 
+
+---
+
+## Sample Output
+
+**Ray ID:** `960451283ec6a936`  
+**Datetime:** 2025-07-16T20:40:51Z  
+**Host:** [wws-test1.cdn-dev.it.umich.edu](https://wws-test1.cdn-dev.it.umich.edu)  
+**Path:** `/cfep/waf?`  
+
+*Firewall Details:*  
+**Action:** skip  
+**Source:** firewallCustom  
+
+*Bot Management:*  
+**Bot Score:** 99  
+**Bot Score Source:** Machine Learning  
+**JA3 Fingerprint:** 44e196215737a9dd3cfe32eae480cbe8  
+**JA4 Fingerprint:** q13d0312h3_55b375c5d22e_5a06198afb93  
+
+*Client Details:*  
+**IP:** 35.2.11.200 (US)  
+**ASN:** 36375  
+**User Agent:** `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36`
+
 ---
 
 ## Cloudflare GraphQL Query
