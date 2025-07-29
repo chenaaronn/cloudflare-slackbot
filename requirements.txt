@@ -1,0 +1,6 @@
+requests
+ipwhois
+python-dotenv
+Flask
+slack_sdk
+slackeventsapi

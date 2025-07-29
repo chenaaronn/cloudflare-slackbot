@@ -82,21 +82,6 @@ def handle_webby_help(client):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*`/webby flip`*\nFlip a coin and get heads or tails."
-            }
-        },
-        {
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": "*`/webby roll`* or *`/webby roll d(number of sides)`*\nRoll a die — default is 6 sides.\n\n*Examples:* `/webby roll`, `/webby roll d20`"
-            }
-        },
-        {"type": "divider"},
-        {
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
                 "text": "Need help? Just type *`/webby`* or *`/help`* anytime."
             }
         },
