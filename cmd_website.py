@@ -1,33 +1,21 @@
-# /website [site name]
 import socket
-import subprocess
 import ipaddress
-import threading
 from urllib.parse import urlparse
-
-from flask import request, Response
 from ipwhois import IPWhois
-import slack
 
-from slash_commands.cloudflare_utils import get_dns_info
+from cloudflare_utils import get_dns_info
 
-def handle_website(client):
-    data = request.form
-    channel_id = data.get('channel_id')
-    text = data.get('text')
-
+def handle_website(client, channel_id, text):
     args = text.split()
     if len(args) < 1:
-        return Response("Usage: /website [website URL]", status=200)
+        client.chat_postMessage(channel=channel_id, text="Usage: /website [website URL]")
+        return {"statusCode": 200, "body": ""}
 
     domain = args[0]
-    threading.Thread(
-        target=process_website,
-        args=(client, domain, channel_id),
-        daemon=True
-    ).start()
+    client.chat_postMessage(channel=channel_id, text=f"Gathering info about `{domain}`...")
 
-    return Response(), 200
+    return process_website(client, domain, channel_id)
+# handle_website()
 
 def process_website(client, domain, channel_id):
     parsed = urlparse(domain)
@@ -35,7 +23,7 @@ def process_website(client, domain, channel_id):
 
     if not is_valid_domain(domain):
         client.chat_postMessage(channel=channel_id, text="Invalid website domain / Domain not found.")
-        return
+        return {"statusCode": 200, "body": ""}
 
     try:
         infos = socket.getaddrinfo(domain, None, socket.AF_UNSPEC, socket.SOCK_STREAM)
@@ -68,21 +56,25 @@ def process_website(client, domain, channel_id):
     if cloudflare == "Yes":
         try:
             dns_records = get_dns_info(domain)
+            response_msg += f"\n{dns_records}"
         except Exception as e:
-            dns_records = f"Error: {str(e)}"
-        response_msg += f"\n{dns_records}"
+            response_msg += f"\nDNS Lookup Error: {str(e)}"
 
-    client.chat_postMessage(channel=channel_id, text=response_msg)
-# process_miwebsite()
+    try:
+        client.chat_postMessage(channel=channel_id, text=response_msg)
+    except Exception as e:
+        print(f"❌ Failed to post message: {e}")
+
+    return {"statusCode": 200, "body": ""}
+# process_website()
 
 # checks if the domain can be resolved to an IP address
 def is_valid_domain(domain):
     if domain.startswith("http://") or domain.startswith("https://"):
         domain = urlparse(domain).netloc
-   
+
     try:
         socket.gethostbyname(domain)
         return True
     except socket.gaierror:
         return False
-# is_valid_domain()

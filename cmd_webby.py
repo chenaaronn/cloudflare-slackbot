@@ -1,18 +1,13 @@
-from flask import request, Response
 import random
+import json
 
-from flask import request, Response
-import random
-
-def handle_webby(client):
-    data = request.form
-    channel_id = data.get('channel_id')
-    text = data.get('text', '').strip().lower()
+def handle_webby(client, channel_id, text):
+    text = text.strip().lower()
 
     if text == 'flip':
         result = random.choice(['Heads', 'Tails'])
         client.chat_postMessage(channel=channel_id, text=f"🪙 You flipped *{result}*!")
-    
+
     elif text.startswith('roll'):
         try:
             parts = text.split()
@@ -22,34 +17,38 @@ def handle_webby(client):
                 sides = int(parts[1][1:])
             else:
                 raise ValueError("Invalid format")
-            
+
             result = random.randint(1, sides)
             client.chat_postMessage(channel=channel_id, text=f"🎲 You rolled a *{result}* (1–{sides})")
         except Exception:
             client.chat_postMessage(channel=channel_id, text="❗ Invalid roll format. Use `/webby roll` or `/webby roll d(number of sides)`.")
 
     elif text == '' or text == 'help':
-        return handle_webby_help(client)
+        return handle_webby_help(client, channel_id)
     else:
         client.chat_postMessage(
             channel=channel_id,
             text=f"❓ Sorry, I don't recognize that command. Type `/webby` or `/webby help` to see what I can do."
         )
 
-    return Response(), 200
+    return {"statusCode": 200, "body": ""}
 # handle_webby()
-from flask import request, Response
 
-def handle_webby_help(client):
-    data = request.form
-    channel_id = data.get('channel_id')
-
+def handle_webby_help(client, channel_id):
     blocks = [
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
                 "text": "Hi! I'm *Webby* – your Cloudflare & web tools assistant.\n\nHere are the commands I support:"
+            }
+        },
+        {"type": "divider"},
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*`/website [website_url]`*\nCheck hosting, IP ownership, and DNS records for a domain.\n\n*Example:* `/website deepblue.lib.umich.edu`"
             }
         },
         {"type": "divider"},
@@ -74,14 +73,6 @@ def handle_webby_help(client):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*`/website [website_url]`*\nCheck hosting, IP ownership, and DNS records for a domain.\n\n*Example:* `/website deepblue.lib.umich.edu`"
-            }
-        },
-        {"type": "divider"},
-        {
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
                 "text": "Need help? Just type *`/webby`* or *`/help`* anytime."
             }
         },
@@ -97,5 +88,5 @@ def handle_webby_help(client):
     ]
 
     client.chat_postMessage(channel=channel_id, blocks=blocks)
-    return Response(), 200
-
+    return {"statusCode": 200, "body": ""}
+# handle_webby_help()

@@ -1,62 +1,59 @@
-# main Slack bot logic + event handlers
 import os
 from pathlib import Path
-
-import slack
-from flask import Flask, request, Response
 from dotenv import load_dotenv
-from slackeventsapi import SlackEventAdapter
+from urllib.parse import parse_qs
+from cmd_website import handle_website
+from cmd_cf import handle_cf_ray
+from cmd_webby import handle_webby
+from slack_sdk import WebClient
 
-from slash_commands.website import handle_website
-from slash_commands.cf import handle_cf_ray
-from slash_commands.webby import handle_webby
+import base64
+import urllib.parse
 
-# loads environment variables
+# load environment variables
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
 
-# launches a web server to handle incoming HTTP requests (required for Slack Events API)
-# current running webserver
-app = Flask(__name__) 
+client = WebClient(token=os.environ['SLACK_TOKEN'])
 
-# connects Slack to your Flask app via the Events API.
-# slack sends events (ie msgs) to your /slack/events endpoint
-slack_event_adapter = SlackEventAdapter(os.environ['SIGNING_SECRET'],'/slack/events', app)
+def lambda_handler(event, context):
+    print("DEBUG: Raw event received:", event)
 
-# gives bot the ability to send messages, fetch users, channels, etc.
-# uses the Slack Web API
-client = slack.WebClient(token=os.environ['SLACK_TOKEN'])
-# return bot id
-BOT_ID = client.api_call("auth.test")['user_id']
+    path = event.get("rawPath", "")
+    body = event.get("body", "")
 
-# EVENT HANDLING TUT EXAMPLE
-@slack_event_adapter.on('message')
-def handle_message(event_data):
-    event = event_data.get('event', {}) # look for event, if nothing return blank dict; this is bascially msg
-    channel_id = event.get('channel')
-    user_id = event.get('user')
-    text = event.get('text')
-    
-    if BOT_ID != user_id:
-        if 'hi webby' in text.lower() or 'hello webby' in text.lower():
-            client.chat_postMessage(channel=channel_id, text=f"Hello <@{user_id}>!")
-        elif 'echo' in text.lower():
-            client.chat_postMessage(channel=channel_id, text=text)
-    
-@app.route('/website', methods=['POST'])
-def website():
-    return handle_website(client)
+    # decode base64 body if necessary
+    if event.get("isBase64Encoded", False):
+        body = base64.b64decode(body).decode()
 
-@app.route('/cf', methods=['POST'])
-@app.route('/cloudflare', methods=['POST'])
-def cloudflare_command():
-    return handle_cf_ray(client) 
+    print("DEBUG: rawPath =", path)
+    print("DEBUG: body =", body)
 
-@app.route('/webby', methods=['POST'])
-#@app.route('/help', methods=['POST'])
-def webby_help():
-    return handle_webby(client)
+    params = parse_qs(body)
+    print("DEBUG: Parsed params =", params)
 
-# automatically update the web server
-if __name__ == "__main__":
-    app.run(debug=True)
+    # extract slack data
+    channel_id = params.get("channel_id", [""])[0]
+    text = params.get("text", [""])[0]
+    command = params.get("command", [""])[0].lstrip("/")
+    # command = path.rsplit("/", 1)[-1] <- OLD
+    print(f"DEBUG: command={command}, channel_id={channel_id}, text={text}")
+
+    # slash command routing
+    if command == "website":
+        return handle_website(client, channel_id, text)
+    elif command in ["cf", "cloudflare"]:
+        return handle_cf_ray(client, channel_id, text)
+    elif command == "webby":
+        return handle_webby(client, channel_id, text) 
+    elif command == "test":
+        return {
+            "statusCode": 200,
+            "body": "Successfully running on Lambda!"
+        }
+    else:
+        return {
+            "statusCode": 400,
+            "body": f"⚠️ Unknown command: `{command}`"
+        }
+# lambda_handler()

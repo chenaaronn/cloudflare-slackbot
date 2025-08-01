@@ -1,37 +1,36 @@
-from flask import request, Response
 import re, os, requests
 from datetime import datetime, timedelta, timezone
 
 RAY_ID_REGEX = re.compile(r"^[a-fA-F0-9]{16}$")
 
-def handle_cf_ray(client):
-    data = request.form
-    channel_id = data.get('channel_id')
-    text = data.get('text')
-
+def handle_cf_ray(client, channel_id, text):
     args = text.strip().split()
 
     if len(args) != 2 or args[0] != "-ray":
-        return Response("Usage: /cf -ray [ray_id] or /cloudflare -ray [ray_id]", status=200)
+        client.chat_postMessage(
+            channel=channel_id,
+            text="Usage: /cf -ray [ray_id] or /cloudflare -ray [ray_id]"
+        )
+        return {"statusCode": 200, "body": ""}
 
     ray_id = args[1]
 
     if not RAY_ID_REGEX.fullmatch(ray_id):
-        return Response("Invalid Ray ID format. A Ray ID is a 16-character hex string.", status=200)
-    
-    # get a 30-day time range
+        client.chat_postMessage(
+            channel=channel_id,
+            text="Invalid Ray ID format. A Ray ID is a 16-character hex string."
+        )
+        return {"statusCode": 200, "body": ""}
+
     now = datetime.now(timezone.utc)
     start = (now - timedelta(days=30)).isoformat()
     end = now.isoformat()
 
-    # api setup
     api_token = os.getenv("CLOUDFLARE_API_TOKEN")
-    zone_tag = os.getenv("CLOUDFLARE_ZONE_ID")  # This is the zone ID
+    zone_tag = os.getenv("CLOUDFLARE_ZONE_ID")
 
     url = "https://api.cloudflare.com/client/v4/graphql"
 
-    # graphQL query field list/string
-    # dataset: firewallEventsAdaptive
     query = {
         "query": """
         query ListFirewallEvents($zoneTag: string, $filter: FirewallEventsAdaptiveFilter_InputObject) {
@@ -67,7 +66,6 @@ def handle_cf_ray(client):
             "zoneTag": zone_tag,
             "filter": {
                 "rayName": ray_id,
-                # datetime window (dynamic instead of hardcoded)
                 "datetime_geq": start,
                 "datetime_leq": end
             }
@@ -82,27 +80,24 @@ def handle_cf_ray(client):
     res = requests.post(url, json=query, headers=headers)
 
     if not res.ok:
-        return Response(f"Error fetching data: {res.status_code} {res.text}", status=200)
+        client.chat_postMessage(channel=channel_id, text=f"Error fetching data: {res.status_code} {res.text}")
+        return {"statusCode": 200, "body": ""}
 
     try:
         data = res.json()
     except ValueError:
-        return Response(f"Non-JSON response received: {res.text}", status=200)
+        client.chat_postMessage(channel=channel_id, text=f"Non-JSON response received: {res.text}")
+        return {"statusCode": 200, "body": ""}
 
-    # print entire response to debug unexpected structure or errors
-    print("DEBUG: Full GraphQL response:", data)
-
-    # Check for GraphQL errors
     if data.get("errors"):
-        return Response(f"GraphQL error: {data['errors'][0]['message']}", status=200)
+        client.chat_postMessage(channel=channel_id, text=f"GraphQL error: {data['errors'][0]['message']}")
+        return {"statusCode": 200, "body": ""}
 
     events = data.get("data", {}).get("viewer", {}).get("zones", [{}])[0].get("firewallEventsAdaptive", [])
 
-    # checks whether GraphQL request is succeeding or
-    # getting results but missing them in the parsing logic
-    print("DEBUG: GraphQL response:", data)
     if not events:
-        return Response("No firewall events found for that Ray ID.", status=200)
+        client.chat_postMessage(channel=channel_id, text="No firewall events found for that Ray ID.")
+        return {"statusCode": 200, "body": ""}
 
     event = events[0]
 
@@ -121,7 +116,7 @@ def handle_cf_ray(client):
         f"*Bot Score Source:* {event.get('botScoreSrcName')}\n"
         f"*JA3 Fingerprint:* {event.get('ja3Hash')}\n"
         f"*JA4 Fingerprint:* {event.get('ja4')}\n"
-
+        
         f"\n_Client Details:_\n"
         f"*IP:* {event.get('clientIP')} ({event.get('clientCountryName')})\n"
         f"*ASN:* {event.get('clientAsn')}\n"
@@ -129,4 +124,5 @@ def handle_cf_ray(client):
     )
 
     client.chat_postMessage(channel=channel_id, text=msg)
-    return Response(), 200
+    return {"statusCode": 200, "body": ""}
+# handle_cf_ray()
