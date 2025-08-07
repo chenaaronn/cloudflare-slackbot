@@ -33,15 +33,15 @@ def lambda_handler(event, context):
     print("DEBUG: Parsed params =", params)
 
     # extract slack data
+    user_id = params.get("user_id", [""])[0] # new
     channel_id = params.get("channel_id", [""])[0]
     text = params.get("text", [""])[0]
     command = params.get("command", [""])[0].lstrip("/")
-    # command = path.rsplit("/", 1)[-1] <- OLD
     print(f"DEBUG: command={command}, channel_id={channel_id}, text={text}")
 
     # slash command routing
     if command == "website":
-        return handle_website(client, channel_id, text)
+        return handle_website(client, channel_id, text, user_id)
     elif command in ["cf", "cloudflare"]:
         return handle_cf_ray(client, channel_id, text)
     elif command == "webby":

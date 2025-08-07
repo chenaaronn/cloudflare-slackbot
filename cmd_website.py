@@ -5,14 +5,23 @@ from ipwhois import IPWhois
 
 from cloudflare_utils import get_dns_info
 
-def handle_website(client, channel_id, text):
+def handle_website(client, channel_id, text, user_id):
     args = text.split()
     if len(args) < 1:
         client.chat_postMessage(channel=channel_id, text="Usage: /website [website URL]")
         return {"statusCode": 200, "body": ""}
 
     domain = args[0]
-    client.chat_postMessage(channel=channel_id, text=f"Gathering info about `{domain}`...")
+
+    client.chat_postEphemeral(
+        channel=channel_id,
+        user=user_id,
+        text=(
+            "Notice: This request may exceed Slack’s response time limit, which can result in a temporary `operation_timeout` error. "
+            "You can safely disregard this message.\n\n"
+            "*Gathering info about `{domain}`...*".format(domain=domain)
+        )
+    )
 
     return process_website(client, domain, channel_id)
 # handle_website()
